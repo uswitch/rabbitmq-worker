@@ -1,0 +1,13 @@
+build:
+  test:
+    image: clojure
+    commands:
+      - lein test
+
+compose:
+  database:
+    image: rabbitmq:3.6.5
+
+cache:
+  mount:
+    - .deps/leiningen
