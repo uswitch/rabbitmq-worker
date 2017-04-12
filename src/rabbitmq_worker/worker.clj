@@ -32,7 +32,7 @@
       (log/tracef "Received message %d" delivery-tag)
       (let [message (String. payload "UTF-8")]
         (handler message)
-        (log/tracef "ACKing messag with delivery tag %d" delivery-tag)
+        (log/tracef "ACKing message with delivery tag %d" delivery-tag)
         (langohr-basic/ack ch delivery-tag))
       (catch Throwable t
         (log/error t "Exception occured while processing message." delivery-tag " Message will be rejected.")
@@ -80,7 +80,7 @@
 
    Advanced usage:
 
-   The following map shows all the options supported if you ned to configure more advanced consumers.
+   The following map shows all the options supported if you need to configure more advanced consumers.
    Don't override unless you know what you're doing.
    {:queue            String
     :queue-auto-delete Boolean
