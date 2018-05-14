@@ -19,9 +19,13 @@
 
 (use-fixtures :each with-connection)
 
-(defn consumer-fn [promise payload]
-  (log/info "Delivery consumed by handler, payload:" payload)
-  (deliver promise payload))
+(defn consumer-fn
+  ([promise payload]
+   (log/info "Delivery consumed by handler, payload:" payload)
+   (deliver promise payload))
+  ([promise payload metadata]
+   (log/info "Delivery consumed by handler, metadata:" metadata " payload:" payload)
+   (deliver promise payload)))
 
 (defn fail-consumer-fn [promise payload]
   (log/info "Delivery consumed by fail handler, payload:" payload)
@@ -47,6 +51,17 @@
    :failed-queue-exclusive   false
    :failed-queue-durable     false})
 
+(def consumer-config-with-meta
+  {:queue                    "test-queue"
+   :queue-auto-delete        true
+   :queue-exclusive          false
+   :queue-durable            false
+   :metadata                 true
+   :failed-queue             "test-queue-failed"
+   :failed-queue-auto-delete true
+   :failed-queue-exclusive   false
+   :failed-queue-durable     false})
+
 (deftest consume-messages
   (let [my-promise (promise)]
 
@@ -55,6 +70,15 @@
     (publish-msg *connection* "test-queue" "banana")
 
     (is (= "banana" (deref my-promise 10 :timeout)))))
+
+(deftest consume-messages-meta-data
+  (let [my-promise (promise)]
+
+    (worker/consume *connection* consumer-config-with-meta (fn [payload meta] (consumer-fn my-promise payload meta)))
+
+    (publish-msg *connection* "test-queue" "kiwi")
+
+    (is (= "kiwi" (deref my-promise 10 :timeout)))))
 
 (deftest handle-errors
   (testing "continues consuming messages even after one of the payloads throws an error"

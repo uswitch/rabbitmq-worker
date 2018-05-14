@@ -1,5 +1,4 @@
 # rabbitmq-worker
-[![Build Status](https://drone.uswitchinternal.com/api/badges/uswitch/rabbitmq-worker/status.svg)](https://drone.uswitchinternal.com/uswitch/rabbitmq-worker)
 
 A Clojure library that wraps the excellent [Langohr](http://clojurerabbitmq.info/) library in order to hide the connecting to RabbitMQ,
 , consuming, acking/nacking of messages, publishing etc. For us this has been suprisingly error / confusion prone in projects that roll their own setup.
@@ -10,7 +9,7 @@ This library tries to be a "Sugar-coated API for task queues that hides all the 
 
 ## Getting the library
 For leiningen: 
-```[uswitch/rabbitmq-worker "0.3.0"]```
+```[uswitch/rabbitmq-worker "0.3.1"]```
 
 ### Opening a connection
 
@@ -77,6 +76,6 @@ For local testing with lein test, you need a RabbitMQ instance running locally.
 
 # License
 
-Copyright © 2017 uSwitch.
+Copyright © 2017-2018 uSwitch.
 
 Distributed under the Eclipse Public License, the same as Clojure.
