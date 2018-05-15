@@ -46,12 +46,14 @@ Messages that throw an error will be automatically pushed onto a queue named `{o
 The following map shows all the options supported if you need to configure more advanced consumers, but don't override unless you know what you're doing.
 
 ```clojure
-{:queue             String
- :queue-auto-delete Boolean
- :queue-exclusive   Boolean
- :queue-durable     Boolean
- :queue-arguments   {:x-dead-letter-exchange String
-                     :x-dead-letter-routing-key String}
+{:queue                    String
+ :queue-auto-delete        Boolean
+ :queue-exclusive          Boolean
+ :queue-durable            Boolean
+ :queue-arguments          {:x-dead-letter-exchange String
+                            :x-dead-letter-routing-key String}
+ :metadata                 Boolean (provide metadata to message hander function as 2nd arg.)
+ :raw-payload              Boolean (provide message as raw payload (Byte array) instead of string)
  :failed-queue             String
  :failed-queue-auto-delete Boolean
  :failed-queue-durable     Boolean
