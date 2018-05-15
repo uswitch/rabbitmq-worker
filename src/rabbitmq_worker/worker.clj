@@ -28,11 +28,13 @@
 
 (defn- wrap-message-acknowledgement
   "handler is function provided by library user: args [message] or if metadata-requested is enabled [message metadata]"
-  [handler error-handler metadata-requested]
+  [handler error-handler metadata-requested raw-payload]
   (fn [ch {:keys [delivery-tag] :as meta} ^bytes payload]
     (try
       (log/tracef "Received message %d" delivery-tag)
-      (let [message (String. payload "UTF-8")]
+      (let [message (if raw-payload
+                      payload
+                      (String. payload "UTF-8"))]
         (if metadata-requested
           (handler message meta)
           (handler message))
@@ -93,6 +95,7 @@
     :queue-arguments   {:x-dead-letter-exchange String
                        :x-dead-letter-routing-key String}
     :metadata                 Boolean (provide metadata to message hander function as 2nd arg.)
+    :raw-payload              Boolean (provide message as raw payload (Byte array) instead of string)
     :failed-queue             String
     :failed-queue-auto-delete Boolean
     :failed-queue-durable     Boolean
@@ -104,6 +107,7 @@
         queue-name          (:queue consumer-config)
         failed-queue-name   (get consumer-config :failed-queue (failed-queue-name queue-name))
         metadata            (get consumer-config :metadata false)
+        raw-payload         (get consumer-config :raw-payload false)
         queue-config        {:exclusive   (get consumer-config :queue-exclusive false)
                              :auto-delete (get consumer-config :queue-auto-delete false)
                              :durable     (get consumer-config :queue-durable true)
@@ -135,7 +139,7 @@
     (log/info "Starting consumption off queue:" queue-name)
     (langohr-consumers/subscribe channel
                                  queue-name
-                                 (wrap-message-acknowledgement message-handler-fn error-handler metadata)
+                                 (wrap-message-acknowledgement message-handler-fn error-handler metadata raw-payload)
                                  {:handle-shutdown-signal-fn (make-shutdown-handler connection)})
 
     (log/info "RabbitMQ setup done, the Langohr RabbitMQ consumer should now be running in another thread.")
