@@ -139,8 +139,8 @@
 
 (deftest queue-length
   (let [connection (make-connection)]
-    (worker/publish connection "test-queue-4" "payload 1" {:exclusive true})
+    (worker/publish connection "test-queue-4" "payload 1" {:exclusive true :durable false})
     (is (= 1 (worker/queue-length connection "test-queue-4")))
-    (worker/publish connection "test-queue-4" "payload 2" {:exclusive true})
+    (worker/publish connection "test-queue-4" "payload 2" {:exclusive true :durable false})
     (is (= 2 (worker/queue-length connection "test-queue-4")))
     (worker/close-connection connection)))
