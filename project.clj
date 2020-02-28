@@ -1,4 +1,4 @@
-(defproject uswitch/rabbitmq-worker "0.3.2"
+(defproject uswitch/rabbitmq-worker "0.3.3"
   :description "wraps langohr"
   :url "https://github.com/uswitch/rabbitmq-worker"
   :license {:name "Eclipse Public License"

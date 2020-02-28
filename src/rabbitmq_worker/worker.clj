@@ -167,16 +167,19 @@
   ([connection queue-name payload]
    (publish connection queue-name payload {}))
   ([connection queue-name payload queue-options]
+   (publish connection queue-name payload {} {}))
+  ([connection queue-name payload queue-options messsage-options]
    (let [channel       (langohr.channel/open connection)
          queue-options (merge {:exclusive   false
                                :auto-delete false
                                :durable     true
                                :arguments   {"x-dead-letter-exchange"    ""
                                              "x-dead-letter-routing-key" (failed-queue-name queue-name)}}
-                              queue-options)]
+                              queue-options)
+         messsage-options (merge {:content-type "text/plain" :mandatory true} messsage-options)]
      (langohr-queue/declare channel queue-name queue-options)
      (langohr-confirm/select channel)
-     (langohr-basic/publish channel default-exchange-name queue-name payload {:content-type "text/plain" :mandatory true})
+     (langohr-basic/publish channel default-exchange-name queue-name payload messsage-options)
      (langohr-confirm/wait-for-confirms channel)
      (langohr.channel/close channel))
    (log/info "published message to queue" queue-name)))
